@@ -80,7 +80,7 @@ void setNumber(uint8_t number) {
 
 bool hasPinLevel(const bool pinState, const bool level) {
   // DEBOUNCE_TIME - это не время дребезга, а время спокойствия после дребезга!
-  static const uint16_t DEBOUNCE_TIME = 20;
+  static const uint16_t DEBOUNCE_TIME = 50;
   static bool lastPinState = pinState;
   static uint32_t lastTimestamp = 0;
 
