@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#define DELAY 1000
 #define INDICATOR_CC PORTD
 #define INDICATOR_CA PORTB
 
@@ -82,9 +83,17 @@ void setup() {
 }
 
 void loop() {
-  for (int8_t i = 9; i >= 0; i--) {
+  int8_t i;
+
+  for (i = 0; i < 9; i++) {
     setNumber(i);
 
-    _delay_ms(1000);
+    _delay_ms(DELAY);
+  }
+
+  for (i = 9; i > 0; i--) {
+    setNumber(i);
+
+    _delay_ms(DELAY);
   }
 }
