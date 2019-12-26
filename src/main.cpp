@@ -3,6 +3,7 @@
 #define DELAY 1000
 #define INDICATOR_CC PORTD
 #define INDICATOR_CA PORTB
+#define BUTTONS PORTA
 
 // digits for indicator with common catode
 #define CLEAR_CC INDICATOR_CC=0x00
@@ -29,6 +30,8 @@
 #define SET_SEVEN_CA INDICATOR_CA=0xF8
 #define SET_EIGHT_CA INDICATOR_CA=0x80
 #define SET_NINE_CA INDICATOR_CA=0x90
+
+#define BUTTON_STATE PINA&1
 
 void setNumber(uint8_t number) {
   switch (number) {
@@ -75,25 +78,43 @@ void setNumber(uint8_t number) {
   }
 }
 
+bool hasPinLevel(const bool pinState, const bool level) {
+  // DEBOUNCE_TIME - это не время дребезга, а время спокойствия после дребезга!
+  static const uint16_t DEBOUNCE_TIME = 20;
+  static bool lastPinState = pinState;
+  static uint32_t lastTimestamp = 0;
+
+  bool newPinLevelMatch = false;
+
+  if (pinState != lastPinState) {
+    lastPinState = pinState;
+    lastTimestamp = millis();
+  } else if (lastTimestamp && (millis() - lastTimestamp) >= DEBOUNCE_TIME) {
+    newPinLevelMatch = pinState == level;
+    lastTimestamp = 0;
+  }
+
+  return newPinLevelMatch;
+}
+
 void setup() {
+  DDRA=0x00;
   DDRD = 0xFF;
   DDRB = 0xFF;
+
+  BUTTONS=0x00;
   CLEAR_CC;
   CLEAR_CA;
 }
 
 void loop() {
-  int8_t i;
+  static int8_t number = 0;
 
-  for (i = 0; i < 9; i++) {
-    setNumber(i);
+  if (hasPinLevel(BUTTON_STATE, HIGH)) {
+    number++;
 
-    _delay_ms(DELAY);
+    if (number > 9) number = 0;
   }
 
-  for (i = 9; i > 0; i--) {
-    setNumber(i);
-
-    _delay_ms(DELAY);
-  }
+  setNumber(number);
 }
