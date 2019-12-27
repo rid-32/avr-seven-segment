@@ -102,7 +102,7 @@ void setup() {
   DDRD = 0xFF;
   DDRB = 0xFF;
 
-  BUTTONS=0x00;
+  BUTTONS=0x01;
   CLEAR_CC;
   CLEAR_CA;
 }
@@ -110,7 +110,7 @@ void setup() {
 void loop() {
   static int8_t number = 0;
 
-  if (hasPinLevel(BUTTON_STATE, HIGH)) {
+  if (hasPinLevel(BUTTON_STATE, LOW)) {
     number++;
 
     if (number > 9) number = 0;
